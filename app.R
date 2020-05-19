@@ -118,7 +118,7 @@ body    <- dashboardBody(
                   collapsible = F,
                   p("This is a practise app .."),
                   p("Check out this pug picture from pixabay!"),
-                  img(src='pug-801826_640.png'),
+                  img(src='pug-801826_640.jpg'),
                   width = 12))),
 
     #== test_tab==============
@@ -240,7 +240,7 @@ server <- function(input, output, session) {
 
   testfile <- reactive({
     req(input$testInputFile)
-    testfile <- read_file(input$testInputFile$datapath)
+    temp_file <- read_file(input$testInputFile$datapath)
   })
   
   ##========= display table ==================
