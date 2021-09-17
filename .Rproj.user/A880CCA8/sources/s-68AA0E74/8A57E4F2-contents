@@ -78,7 +78,7 @@ source('functions/testfunction.R')
 dirDATA <- "data/"
 
 #!# files
-fnLAKE <- "lakes.csv"
+fnKM <- "km_min_max.csv"
 
 
 ##== set variables =======
@@ -86,7 +86,7 @@ variables = reactiveValues(something = NULL)
 
 
 ##==load files=========
-dtLAKE <- fread(paste(dirDATA, fnLAKE, sep = ""))
+dtKM <- fread(paste(dirDATA, fnKM, sep = ""))
 
 
 
@@ -115,15 +115,15 @@ body    <- dashboardBody(
                   solidHeader = T,
                   status = "success",
                   collapsible = F,
-                  p("This is a demonstration app."),
-                  p("Check out this picture from pixabay!"),
-                  img(src='Frog_pixabay.png'),
+                  p("This is a practise app .."),
+                  p("Check out this pug picture from pixabay!"),
+                  img(src='pug-801826_640.jpg'),
                   width = 12))),
 
     #== test_tab==============
     tabItem(tabName = "test", 
             fluidRow(
-              box(title = "Testpage",
+              box(title = "Testpagina",
                   solidHeader = T,
                   status = "success",
                   collapsible = T,
@@ -207,8 +207,8 @@ body    <- dashboardBody(
                   collapsible = T,
                   collapsed = F,
                   width = 12,
-                  h3("I hope you're interested in Ferraris.. "),
-                  downloadButton("testdocument", "Download document"),
+                  h3("Help"),
+                  downloadButton("testdocument", "Download document")
                   )))))
     
 
@@ -252,8 +252,8 @@ server <- function(input, output, session) {
   
   ##========= display previously loaded data ===========
   output$testDisplayInternalData <- renderTable({
-    req(dtLAKE)
-    as.data.frame(dtLAKE)
+    req(dtKM)
+    as.data.frame(dtKM)
   })
 
   ##========= display plot ==================
@@ -261,12 +261,12 @@ server <- function(input, output, session) {
     req(testfile())
     
     if(input$add_line == FALSE){p <- ggplot(testfile()) +
-      geom_point(aes(temperature_C, abundance_perc)) +
+      geom_point(aes(min, max)) +
       theme_bw()}
 
     if(input$add_line == TRUE){ p <- ggplot(testfile()) +
-      geom_point(aes(temperature_C, abundance_perc)) +
-      geom_smooth(aes(temperature_C, abundance_perc), method = "lm") + 
+      geom_point(aes(min, max)) +
+      geom_smooth(aes(min, max), method = "lm") + 
       theme_bw()}
     
     return(p)
@@ -278,7 +278,7 @@ server <- function(input, output, session) {
   output$plotly_01 <- renderPlotly({
     req(testfile())
     
-    p <- ggplot(testfile(), aes(temperature_C, abundance_perc)) +
+    p <- ggplot(testfile(), aes(min, max)) +
       geom_point() +
       geom_smooth(method = "lm")
     
@@ -299,7 +299,7 @@ server <- function(input, output, session) {
 
     leaflet(df_wgs) %>%
       addTiles('http://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png') %>%
-      addCircleMarkers(color = "grey", label = ~ paste(plant_name, abundance_perc), labelOptions = options(noHide = T, textsize = "15px"))
+      addCircleMarkers(color = "grey", label = ~ paste(plant, value), labelOptions = options(noHide = T, textsize = "15px"))
     
   })
 
@@ -315,11 +315,10 @@ output$downloadData <- downloadHandler(
 )  
 
 output$testdocument <- downloadHandler(
-  filename = function(){paste("Ferraris.pdf")},
+  filename = function(){paste("Cool_ferrari.pdf")},
   content <- function(file){file.copy("documentation/164_330_gt.pdf", file)},
   contentType = "application/pdf"
 )
-
 }
 
 shinyApp(ui, server)
